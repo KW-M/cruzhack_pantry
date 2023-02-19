@@ -7,7 +7,14 @@ export function getRecipe(ingredients: string[]): Promise<Recipe_Data> {
     return co.generate({
         model: "4fece9cc-5e74-479e-bef5-f3c42611150c-ft",
         prompt: prompt,
-        max_tokens: 600
+        max_tokens: 800,
+        temperature: 0.8,
+        k: 0,
+        p: 0.75,
+        frequency_penalty: 0,
+        presence_penalty: 0,
+        stop_sequences: ["END\n", "--S--", "Recipe:\n"],
+        return_likelihoods: 'NONE'
     }).then((response) => {
         console.log("co:here response: ", response);
         if (response.statusCode === 200) {

@@ -5,9 +5,9 @@
   "type": "module",
   "packageManager": "pnpm@7.26.3",
   "scripts": {
-    "dev": "vite",
-    "build": "vue-tsc && vite build",
-    "preview": "vite preview"
+    "dev": "vite --host",
+    "build": "vue-tsc && vite build --base=./",
+    "preview": "vite preview --host --base=/pantry-chef/"
   },
   "dependencies": {
     "cohere-ai": "^5.0.2",
