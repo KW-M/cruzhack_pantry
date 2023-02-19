@@ -187,10 +187,10 @@ loadSavedRecipeList();
     <ul
       class="max-w-full md:shadow-none w-72 shadow-2xl ring-lime-200 ring-2 bg-slate-100  h-screen fixed top-0 right-0 overflow-y-scroll px-2">
       <li v-for="(recipe, index) in savedRecipes" @click="showSavedRecipe(index)"
-        class="px-3 py-2 rounded-md lime-ring  my-2 bg-slate-200 font-bold cursor-pointer flex items-center justify-between hover-show-child-parent">
+        class="px-3 py-2 rounded-md lime-ring  my-2 bg-slate-200 font-bold cursor-pointer flex items-center justify-between hover-show-child-parent text-slate-900">
         <span>{{ recipe.title }}</span>
         <button aria-hidden="true" @click="(e) => { e.preventDefault(); removeSavedRecipe(index) }"
-          class="red-button hover-show-child !text-white invisible leading-3  text-center font-bold text-2xl bg-red-400 rounded-full w-10 h-10 select-none flex-grow-0 flex-shrink-0 ml-5">×</button>
+          class="red-button hover-show-child  invisible leading-3  text-center font-bold text-2xl bg-red-400 rounded-full w-10 h-10 select-none flex-grow-0 flex-shrink-0 ml-5">×</button>
       </li>
     </ul>
   </section>
