@@ -1,26 +1,43 @@
-import co from './cohere/cohere'
-console.log(co)
-co.init('BBf3aGEh58aFte5bwyLtu6PJa36ZKO0cFCbtmO3i')
+// import co from './cohere/cohere'
+import { CohereClient, Cohere } from 'cohere-ai'
 
+
+let co = new CohereClient({
+    token: 'BBf3aGEh58aFte5bwyLtu6PJa36ZKO0cFCbtmO3i'
+
+})
+console.log(co)
 export function getRecipe(ingredients: string[]): Promise<Recipe_Data> {
     let prompt = "Food in my pantry:\n" + ingredients.join("\n") + "\n\nRecipe:";
-    return co.generate({
-        model: "4fece9cc-5e74-479e-bef5-f3c42611150c-ft",
-        prompt: prompt,
-        max_tokens: 800,
+    // co.finetuning.createFinetunedModel({
+    //     name: 'pantry_pal_training_data_chat',
+    //     settings: {
+    //         baseModel: {
+    //             baseType: Cohere.finetuning.BaseType.BaseTypeChat,
+    //         },
+    //         datasetId: 'training-data-chat-8b4cde',
+    //     },
+    // }).then(console.log)
+    return co.chat({
+        model: "672dcea9-d221-4d05-b6ad-a3b53acccdb4-ft",
+        preamble: "You are a cooking & baking recipe writer which makes a tasteful recipe from pantry ingredients",
+        message: prompt,
+        maxTokens: 800,
         temperature: 0.8,
         k: 0,
         p: 0.75,
-        frequency_penalty: 0,
-        presence_penalty: 0,
-        stop_sequences: ["END\n", "--S--", "Recipe:\n"],
-        return_likelihoods: 'NONE'
+        frequencyPenalty: 0,
+        presencePenalty: 0,
+        stopSequences: ["END\n", "--S--", "Recipe:\n"],
+        // returnLikelihoods: 'NONE'
     }).then((response) => {
         console.log("co:here response: ", response);
-        if (response.statusCode === 200) {
-            return processResponse(response.body.generations[0].text);
+        if (response.text) {
+            return processResponse(response.text);
+        } else if (response.meta?.warnings) {
+            return { body: "<h3>" + JSON.stringify(response.meta?.warnings?.join(" | ")).slice(1, -1).trim().replace("\"", "").replace(":", ": ") + "</h3>", title: "Error" };
         } else {
-            return { body: "<h3>" + JSON.stringify(response.body).slice(1, -1).trim().replace("\"", "").replace(":", ": ") + "</h3>", title: "Error" };
+            return { body: "<h3>Sorry, recipe couln't be created. Please try later.</h3>", title: "Error" };
         }
     })
 }
@@ -37,7 +54,7 @@ export function processResponse(responseText: string): Recipe_Data {
     let lines = responseText.split("\n")
     let outStr = "";
     let currSection = Recipe_Sections.title;
-    let recepeTitle = "";
+    let receipeTitle = "";
     for (let i = 0; i < lines.length; i++) {
         const line = lines[i].trim();
         const testline = line.toLowerCase();
@@ -57,8 +74,8 @@ export function processResponse(responseText: string): Recipe_Data {
             currSection = Recipe_Sections.commentary;
             continue;
         } else if (currSection === Recipe_Sections.title && testline.length !== 0) {
-            recepeTitle = line;
-            outStr += `<h2>${recepeTitle}</h2>\n`;
+            receipeTitle = line;
+            outStr += `<h2>${receipeTitle}</h2>\n`;
         } else if (testline.length !== 0 && (currSection === Recipe_Sections.ingredients || currSection === Recipe_Sections.directions)) {
             outStr += `<li>${line}</li>\n`;
         } else {
@@ -68,5 +85,5 @@ export function processResponse(responseText: string): Recipe_Data {
     if (currSection === Recipe_Sections.commentary) outStr += `</p>\n`
     else if (currSection === Recipe_Sections.directions) outStr += `</ol>\n`
     else if (currSection === Recipe_Sections.ingredients) outStr += `</ul>\n`
-    return { body: outStr, title: recepeTitle };
+    return { body: outStr, title: receipeTitle };
 }

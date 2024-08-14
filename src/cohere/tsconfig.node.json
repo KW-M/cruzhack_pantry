@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "composite": true,
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "allowSyntheticDefaultImports": true
+  },
+  "include": [
+    "vite.config.ts"
+  ]
+}
+
+
+curl --request POST  \
+  --url https: //api.cohere.com/v1/finetuning/finetuned-models  \
+  --header 'accept: application/json'  \
+  --header 'content-type: application/json'  \
+  --header "Authorization: bearer BBf3aGEh58aFte5bwyLtu6PJa36ZKO0cFCbtmO3i"  \
+  --data '{\
+      "name": "training_data_chat",\
+      "settings": {\
+        "base_model": {\
+          "base_type": "BASE_TYPE_CHAT",\
+    },\
+        "dataset_id": "training-data-chat-8b4cde"\
+  }\
+}'\
